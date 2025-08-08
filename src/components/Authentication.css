@@ -1,0 +1,64 @@
+.auth-container {
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  background-color: #fef6e0;
+}
+
+.auth-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+}
+
+.otp-inputs {
+  display: flex;
+  justify-content: space-between;
+  margin: 1rem 0;
+}
+
+.otp-inputs input {
+  width: 2.5rem;
+  height: 3rem;
+  font-size: 1.5rem;
+  text-align: center;
+  border: 2px solid #3e240c;
+  border-radius: 8px;
+}
+
+.resend-text {
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.resend-text span {
+  color: #3e240c;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+button {
+  background: #3e240c;
+  color: white;
+  padding: 0.6rem 1.5rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.verified-text {
+  margin-top: 1rem;
+  color: green;
+  font-weight: bold;
+}
+
+.message {
+  margin-top: 0.5rem;
+  color: red;
+}
