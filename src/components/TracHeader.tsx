@@ -31,20 +31,20 @@ const TracHeader = () => {
   const [openEdit, setOpenEdit] = useState(false);
 
   return (
-    <header className="bg-white border-b border-border px-6 py-4 flex justify-between items-center">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">TRAC System</h1>
-        <p className="text-lg text-muted-foreground">Welcome Ms. Amyrose Arillo!</p>
-      </div>
+    <header className="bg-white px-6 py-4 flex justify-between items-center">
+  <div>
+  <h1 className="text-xl font-semibold text-black">TRAC System</h1>
+  <p className="text-2xl font-bold text-black">Welcome Ms. Amyrose Arillo!</p>
+</div>
 
       <div className="flex items-center space-x-4">
         {/* Dropdown Menu for Profile */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <div className="flex items-center space-x-2 bg-primary text-primary-foreground px-4 py-2 rounded-full cursor-pointer hover:opacity-90 transition">
+            <div className="flex items-center space-x-2 bg-white border-4 border-primary px-4 py-2 rounded-full cursor-pointer hover:bg-gray-50 transition">
               <Avatar className="w-8 h-8">
                 <AvatarImage src="" />
-                <AvatarFallback className="bg-white text-primary text-sm">M</AvatarFallback>
+                <AvatarFallback className="bg-blue-400 text-white text-sm">M</AvatarFallback>
               </Avatar>
               <span className="text-sm font-medium">Ms. Amyrose</span>
               <ChevronDown size={16} />
