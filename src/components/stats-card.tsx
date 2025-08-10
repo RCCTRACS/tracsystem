@@ -19,7 +19,7 @@ const StatsCard = ({ title, value, type }: StatsCardProps) => {
   };
 
   return (
-    <div className="bg-card rounded-xl p-6 border border-border shadow-sm">
+    <div className="bg-gray-100 rounded-xl p-6 border border-border shadow-sm">
       <h3 className="text-sm font-medium text-muted-foreground mb-2">{title}</h3>
       <p className={`text-4xl font-bold ${getColorClass()}`}>{value}</p>
     </div>
