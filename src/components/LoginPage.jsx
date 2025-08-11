@@ -1,40 +1,51 @@
 import React, { useState } from 'react';
 import './LoginPage.css';
-import OTPVerification from './OTPVerification'
+import OTPVerification from './OTPVerification';
 
 const LoginPage = () => {
   const [step, setStep] = useState('login'); // 'login' | 'otp'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [userId, setUserId] = useState(null); // Store user ID for OTP step
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setErrorMsg('');
+    setLoading(true);
 
     try {
-      const res = await fetch('http://localhost/trac-system/backend/login.php', {
+      const res = await fetch('http://localhost/tracsystem/backend/login.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
 
+      // Handle non-200 HTTP responses
+      if (!res.ok) {
+        throw new Error(`Server returned ${res.status}`);
+      }
+
       const data = await res.json();
 
       if (data.success) {
+        setUserId(data.userId);
         setStep('otp');
-        // No need to call send_otp.php again!
       } else {
-        setErrorMsg(data.message);
+        setErrorMsg(data.message || 'Login failed.');
       }
     } catch (error) {
-      setErrorMsg('Unable to connect to the server.');
+      console.error('Login error:', error);
+      setErrorMsg('Unable to connect to the server. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleOtpVerified = () => {
     alert('Login + OTP verified!');
-    // TODO: Redirect or store session/token
+    // TODO: Redirect to dashboard or store session token here
   };
 
   return (
@@ -70,14 +81,20 @@ const LoginPage = () => {
                   required
                 />
 
-                <button type="submit">Log In</button>
+                <button type="submit" disabled={loading}>
+                  {loading ? 'Logging in...' : 'Log In'}
+                </button>
               </form>
               {errorMsg && <p className="error-msg">{errorMsg}</p>}
             </>
           )}
 
           {step === 'otp' && (
-            <OTPVerification email={email} onVerified={handleOtpVerified} />
+            <OTPVerification
+              email={email}
+              userId={userId}
+              onVerified={handleOtpVerified}
+            />
           )}
         </div>
       </div>

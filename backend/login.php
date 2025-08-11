@@ -1,13 +1,13 @@
 <?php
-
 // Enable error reporting for debugging (disable in production)
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-// Set headers
+// CORS headers
 header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json");
+header("Access-Control-Allow-Headers: Content-Type");
 header("Access-Control-Allow-Methods: POST");
+header("Content-Type: application/json");
 
 // Only allow POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -17,10 +17,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     ]);
     exit();
 }
+
 // Include database config
 require_once("../database/db_config.php");
 
-// Include PHPMailer classes manually
+// Include PHPMailer classes
 require 'phpmailer/PHPMailer.php';
 require 'phpmailer/SMTP.php';
 require 'phpmailer/Exception.php';
@@ -28,17 +29,14 @@ require 'phpmailer/Exception.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-// Get raw JSON input
+// Get JSON input
 $input = file_get_contents("php://input");
 $data = json_decode($input, true);
 
-// Fallback for form-data (for testing)
+// Fallback for form-data
 if (!$data) {
     $data = $_POST;
 }
-
-// Debug (optional - comment out in production)
-// file_put_contents("debug_input.txt", $input);
 
 // Validate input
 if (empty($data['email']) || empty($data['password'])) {
@@ -59,30 +57,30 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 if ($user = $result->fetch_assoc()) {
-    if (password_verify($password, $user['password'])) {
+    // Check password (supports both plain text and hashed)
+    $passwordMatch = password_verify($password, $user['password']) || $password === $user['password'];
 
+    if ($passwordMatch) {
         // Generate OTP
         $otp = rand(100000, 999999);
         $expiresAt = date("Y-m-d H:i:s", strtotime("+5 minutes"));
 
-        // Store OTP
+        // Store OTP in DB
         $otpStmt = $conn->prepare("INSERT INTO user_otps (user_id, otp_code, expires_at) VALUES (?, ?, ?)");
         $otpStmt->bind_param("iss", $user['id'], $otp, $expiresAt);
         $otpStmt->execute();
         $otpStmt->close();
 
-        // Send email using PHPMailer
+        // Send OTP via Gmail
         $mail = new PHPMailer(true);
-
         try {
-            // SMTP setup
             $mail->isSMTP();
             $mail->Host       = 'smtp.gmail.com';
             $mail->SMTPAuth   = true;
             $mail->SMTPSecure = 'tls';
             $mail->Port       = 587;
 
-            // Fetch Gmail credentials from DB
+            // Get Gmail credentials
             $credStmt = $conn->prepare("SELECT email, app_password FROM gmail_credentials LIMIT 1");
             $credStmt->execute();
             $credResult = $credStmt->get_result();
@@ -90,7 +88,7 @@ if ($user = $result->fetch_assoc()) {
             if ($cred = $credResult->fetch_assoc()) {
                 $mail->Username = $cred['email'];
                 $mail->Password = $cred['app_password'];
-                $mail->setFrom($cred['email'], 'Your App');
+                $mail->setFrom($cred['email'], 'RCC TRACS');
             } else {
                 echo json_encode([
                     "success" => false,
@@ -100,7 +98,7 @@ if ($user = $result->fetch_assoc()) {
             }
             $credStmt->close();
 
-            // Compose email
+            // Email body
             $mail->addAddress($user['email']);
             $mail->isHTML(true);
             $mail->Subject = 'Your OTP Code';
@@ -134,7 +132,8 @@ if ($user = $result->fetch_assoc()) {
     ]);
 }
 
-// Clean up
+// Cleanup
 $stmt->close();
 $conn->close();
 ?>
+<?php
