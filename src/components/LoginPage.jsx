@@ -37,7 +37,7 @@ const LoginPage = () => {
       }
     } catch (error) {
       console.error('Login error:', error);
-      setErrorMsg('Unable to connect to the server. Please try again.');
+      setErrorMsg('Unable to connect to the server. Please try again later.');
     } finally {
       setLoading(false);
     }
