@@ -29,12 +29,12 @@ const Sidebar = ({ onDashboardClick }: TracSidebarProps) => {
             <div key={index} className="relative group flex items-center">
               <button
                 onClick={item.onClick}
-                className="w-12 h-12 bg-white rounded-lg flex items-center justify-center transition-colors hover:bg-gray-200"
+                className="w-12 h-12 bg-white rounded-sm flex items-center justify-center transition-colors hover:bg-gray-200"
                 title={item.label}
               >
                 <img src={item.src} alt={item.label} className="w-8 h-8 object-contain" />
               </button>
-              <div className="absolute left-14 bg-white px-3 py-1 rounded-md shadow-md border-2 border-sidebar text-sidebar text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="absolute left-14 bg-white px-3 py-1 rounded-sm shadow-md border-2 border-sidebar text-sidebar text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
                 {item.label}
               </div>
             </div>
